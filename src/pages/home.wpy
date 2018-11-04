@@ -19,7 +19,7 @@
         </navigator>
       </view>
     </view>
-    <view class="nav_list">
+    <!-- <view class="nav_list">
       <navigator open-type="navigate" url="/pages/sign_in">
         <image src="../images/icon_nav_01_new.png" class="nav_icon"></image>
         <view class="nav_text">签到有礼</view>
@@ -36,7 +36,7 @@
         <image src="../images/icon_nav_04_new.png" class="nav_icon"></image>
         <view class="nav_text">我要补货</view>
       </navigator>
-    </view>
+    </view> -->
     <!--发现好商品模块-->
     <discover :list.sync="discoverList"></discover>
     <!--加载更多时动画-->
@@ -115,6 +115,7 @@ export default class Home extends wepy.page {
     const json = await api.getAdList({
       query: {}
     });
+    console.log('商品内容：' + json)
     if (json.data.code == 0) {
       this.adList = json.data.list;
       this.$apply();
@@ -122,9 +123,9 @@ export default class Home extends wepy.page {
   }
   onLoad() {
     let that = this;
-    this.discoverList = [];
-    that.getDiscoverList();
-    this.getAdList();
+    // this.discoverList = [];
+    // that.getDiscoverList();
+    // this.getAdList();
   }
   computed = {}
   methods = {
