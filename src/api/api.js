@@ -4,7 +4,7 @@ import {
 
 let env = "-test" //-dev 或者 -test
 // const apiMall = 'https://sujiefs.com/'
-const apiMall = 'http://192.168.1.108:8081/'
+const apiMall = 'http://192.168.1.109:8081'
 
 /**
  * 获取发现好商品接口
@@ -143,6 +143,8 @@ const childGoodsCatetoryList = (params) => wxRequest(params, apiMall + '/api/mal
 
 //查询广告列表
 const getAdList = (params) => wxRequest(params, apiMall + '/test/getList');
+//获取签名和加密策略
+const getPolicySignature = (params) => wxRequest(params, apiMall + '/app/wechat/getPolicySignature');
 
 export default {
   hostGoodsList,
@@ -194,5 +196,6 @@ export default {
   getMyOrderSize,
   getPayOrderDetail,
   getAdList,
-  getSignDate
+  getSignDate,
+  getPolicySignature
 }

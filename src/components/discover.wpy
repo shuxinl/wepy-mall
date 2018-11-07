@@ -5,9 +5,14 @@
         </view>-->
         <view class="discover_list">
             <navigator class="item" open-type="navigate" wx:for="{{list}}" wx:key="item" url="/pages/home_detail?code={{item.code}}" >
-                <image class="discover_img" src="{{item.logo}}"></image>
-                <view class="info" wx:for="{{item.attrs}}" wx:key="item">
-                    <view>{{item.attrName.attrName}}：</view><view wx:for="{{item.attrValList}}" wx:key="item">{{item.attrVal}} </view>
+                <image class="discover_img" src="{{item.main_figure}}"></image>
+                <!-- <view class="info" wx:for="{{item.attrs}}" wx:key="item"> -->
+                <view class="info">
+                    <!-- <view>{{item.attrName.attrName}}：</view>-->
+                    <view >商家：{{item.buyer_nick}} </view>  
+                </view>
+                <view class="info">
+                    <view >商品价格：{{item.goods_price}} </view> 
                 </view>
         </view>
         </navigator>

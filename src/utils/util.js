@@ -12,6 +12,18 @@ function getCurrentTime() {
   return keep // 20160614134947
 }
 
+// 获取当前日期 2018年11月7日 lsx
+function getCurrentDate() {
+  let keep = ''
+  let date = new Date()
+  let y = date.getFullYear()
+  let m = date.getMonth() + 1
+  m = m < 10 ? '0' + m : m
+  let d = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  keep = y + '' + m + '' + d
+  return keep // 20160614134947
+}
+
 function objLength(input) {
   let type = toString(input)
   let length = 0
@@ -119,7 +131,15 @@ function convertStarArray(score) {
   }
   return arr
 }
+
+// 获取文件后缀名
+function fileSuffix(filename){
+  // let filename = "example.jpg";
+  let extension = filename.split('.').pop();  //jpg
+  return extension;
+}
 module.exports = {
+  getCurrentDate: getCurrentDate,
   getCurrentTime: getCurrentTime,
   objLength: objLength,
   displayProp: displayProp,
@@ -130,5 +150,6 @@ module.exports = {
   div: div,
   mul: mul,
   accAdd: accAdd,
-  convertStarArray: convertStarArray
+  convertStarArray: convertStarArray,
+  fileSuffix:fileSuffix
 }

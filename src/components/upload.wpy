@@ -1,0 +1,226 @@
+<template>
+    <view class="container weui-cell">
+        <view class="weui-uploader">
+            <view class="weui-uploader__hd">
+                <view class="weui-uploader__title">图片上传</view>
+                <view class="weui-uploader__info">(数量：{{files.length}})</view>
+            </view>
+            <view class="weui-uploader__bd">
+                <view class="weui-uploader__files" id="uploaderFiles">
+                    <block wx:for="{{files}}" wx:key="*this">
+                        <view class="weui-uploader__file" bindtap="previewImage" id="{{item}}">
+                            <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+                        </view>
+                    </block>
+                    <view class="weui-uploader__input-box">
+                        <view class="weui-uploader__input" bindtap="chooseImage"></view>
+                        <image class="weui-uploader__file-content" src="../images/upload_add.png" mode="aspectFill" />
+                    </view>
+                    <view class="weui-uploader__input-box" bindtap="uploadFiles">
+                        <image class="weui-uploader__file-content" src="../images/upload_save.png" mode="aspectFill" />
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    import api from '@/api/api';
+    import tip from '@/utils/tip';
+    import util from '@/utils/util';
+    export default class upload extends wepy.component {
+        props = {
+            size: {
+                type: Number,
+                default: 1,
+                twoWay: true
+            }
+        }
+        data = {
+            files: [],
+            policy: "",
+            signature: "",
+            key: "",
+            accessKeyId: "",
+            bucketUrl: ""
+        }
+        computed = {}
+        methods = {
+            chooseImage: function(e) {
+                let that = this;
+                let list = this.files;
+                if (list.length >= this.size) {
+                    wx.showToast({
+                        title: '你只能上传'+ this.size +'个文件',
+                        icon: 'none',
+                        duration: 1200
+                    })
+                    return;
+                }
+                wx.chooseImage({
+                    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                    success: function(res) {
+                        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                        that.files = list.concat(res.tempFilePaths);
+                        that.$apply(); // 触发数据刷新
+                    }
+                })
+            },
+            previewImage: function(e) {
+                wepy.previewImage({
+                    current: e.currentTarget.id, // 当前显示图片的http链接
+                    urls: this.files // 需要预览的图片http链接列表
+                })
+            },
+            uploadFiles: function(e) {
+                console.log("上传按钮事件");
+                let that = this;
+                let file_arr = this.files;
+                for (let index = 0; index < file_arr.length; index++) {
+                    const element = file_arr[index];
+                    console.log(element.indexOf("oss"));
+                    if (element.indexOf("oss") < 0) { // 判断是否上传
+                        // key路径 当前时间
+                        let file_key = that.data.key + util.getCurrentDate() + "/" + util.getCurrentTime() + '.' + util.fileSuffix(element);
+                        wx.uploadFile({
+                            url: that.data.bucketUrl, //上传到OSS
+                            filePath: element,
+                            name: 'file',
+                            formData: {
+                                'key': file_key,
+                                'OSSAccessKeyId': that.data.accessKeyId,
+                                'policy': that.data.policy,
+                                'signature': that.data.signature,
+                                'success_action_status': '200'
+                            },
+                            success: function(res) {
+                                console.log("阿里云", res.statusCode)
+                                if (res.statusCode == 200) {
+                                    wx.showToast({
+                                        title: '上传保存成功',
+                                        icon: 'success',
+                                        duration: 1200
+                                    })
+                                    let showUrl = that.data.bucketUrl + '/' + file_key;
+                                    that.files[index] = showUrl; // 拼装ossUrl 保存到展示集合中  -- 参数修改
+                                } else {
+                                    wx.showToast({
+                                        title: '上传保存失败！',
+                                        icon: 'none',
+                                        duration: 1200
+                                    })
+                                }
+                            }
+                        })
+                    }
+                }
+                // 
+                this.$emit('upload', that.data);
+            }
+        }
+        events = {}
+        onLoad() {
+            console.log("0000000000000:" + this.size);
+            // console.log(util.getCurrentDate());
+            this.getPolicySignature(); // 加载授权信息
+        }
+        // 获取签名信息
+        async getPolicySignature() {
+            const json = await api.getPolicySignature({
+                // query: {
+                //     pageNum: 1,
+                //     pageSize: 3
+                // }
+            });
+            if (json.data.errorNo == 0) {
+                // console.log(json.data.results.data);
+                this.signature = json.data.results.data.signature;
+                this.policy = json.data.results.data.policy;
+                this.key = json.data.results.data.key;
+                this.accessKeyId = json.data.results.data.accessKeyId;
+                this.bucketUrl = json.data.results.data.bucketUrl;
+                this.$apply();
+            } else {}
+        }
+    }
+</script>
+<style lang="less">
+    .weui-uploader__hd {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        padding-bottom: 10px;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    .weui-uploader__bd {
+        margin-bottom: -4px;
+        margin-right: -9px;
+        overflow: hidden;
+    }
+    .weui-uploader__info {
+        float: right;
+    }
+    .weui-uploader__file {
+        float: left;
+        margin-right: 9px;
+        margin-bottom: 9px;
+    }
+    .weui-uploader__img {
+        display: block;
+        width: 79px;
+        height: 79px;
+    }
+    .weui-uploader__file_status {
+        position: relative;
+    }
+    .weui-uploader__input {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
+    .weui-uploader__input-box {
+        float: left;
+        position: relative;
+        margin-right: 9px;
+        margin-bottom: 9px;
+        width: 77px;
+        height: 77px;
+        border: 1px solid #d9d9d9;
+    }
+    icon {
+        display: inline-block;
+        font-size: 0;
+        vertical-align: middle;
+    }
+    .weui-uploader__file-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        color: #fff;
+        width: 50px;
+        height: 50px; // 内容居中
+        justify-content: center;
+        display: flex;
+        align-items: center;
+    }
+    .weui-cell {
+        padding: 10px 15px;
+        position: relative;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+</style>

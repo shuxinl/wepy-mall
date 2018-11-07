@@ -1,0 +1,43 @@
+<template>
+<upload :size.sync="size"></upload>
+</template> 
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import tip from '@/utils/tip';
+import util from '@/utils/util';
+import upload from "../components/upload";
+
+export default class Uploader extends wepy.page {
+  config = {
+    navigationBarTitleText: '文件上传',
+  }
+   components = {
+    upload: upload
+  }
+  data = {
+      size : 1 // 初始化上传文件个数限制
+  }
+  computed = {}
+  methods = {
+  }
+  events = {
+      upload: function(params) {
+          // 进数据处理
+          let arr =  params.files;
+          for (let index = 0; index < arr.length; index++) {
+              const element = arr[index];
+              console.log("_--------------:" + element); 
+          }
+      }
+  }
+  onLoad(){
+    
+  }
+ 
+}
+
+</script>
+<style lang="less">
+
+</style>
