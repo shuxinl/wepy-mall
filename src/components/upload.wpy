@@ -52,7 +52,7 @@
                 let list = this.files;
                 if (list.length >= this.size) {
                     wx.showToast({
-                        title: '你只能上传'+ this.size +'个文件',
+                        title: '你只能上传' + this.size + '个文件',
                         icon: 'none',
                         duration: 1200
                     })
@@ -63,6 +63,18 @@
                     sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
                     success: function(res) {
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                        // 5242880 5M  
+                        for (let index = 0; index < res.tempFiles.length; index++) {
+                            const element = res.tempFiles[index];
+                            if (element.size > 5242880) {
+                                wx.showToast({
+                                    title: '选择图片失败，您选中的某个文件，超出5M',
+                                    icon: 'none',
+                                    duration: 1200
+                                })
+                                return;
+                            }
+                        }
                         that.files = list.concat(res.tempFilePaths);
                         that.$apply(); // 触发数据刷新
                     }
@@ -80,6 +92,7 @@
                 let file_arr = this.files;
                 for (let index = 0; index < file_arr.length; index++) {
                     const element = file_arr[index];
+                    console.log("文件大小：" + element.size);
                     console.log(element.indexOf("oss"));
                     if (element.indexOf("oss") < 0) { // 判断是否上传
                         // key路径 当前时间

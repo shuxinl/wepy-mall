@@ -10,7 +10,7 @@ import upload from "../components/upload";
 
 export default class Uploader extends wepy.page {
   config = {
-    navigationBarTitleText: '文件上传',
+    navigationBarTitleText: '上传测试页面',
   }
    components = {
     upload: upload
