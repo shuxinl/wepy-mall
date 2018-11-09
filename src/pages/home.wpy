@@ -3,7 +3,7 @@
     <swiper class="swiper" indicator-active-color="{{indicatorActiveColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="true">
       <block wx:for="{{adList}}" wx:key="key">
         <swiper-item>
-          <image src="{{item.main_figure}}" class="slide-image" @tap="goToAdvert({{item.product_promotion_links}})" />
+          <image src="https://hinlin.oss-cn-hangzhou.aliyuncs.com/{{item.ad_pic}}" class="slide-image" @tap="goToAdvert({{item.ad_link}})" />
         </swiper-item>
       </block>
     </swiper>
@@ -59,7 +59,7 @@ import BottomLoadMore from "../components/common/bottomLoadMore"
 import Placeholder from "../components/common/placeholder"
 export default class Home extends wepy.page {
   config = {
-    navigationBarTitleText: '演示商城',
+    navigationBarTitleText: 'hinlin',
   }
   components = {
     shopGridList: ShopGridList,
@@ -92,7 +92,7 @@ export default class Home extends wepy.page {
   }
   async getDiscoverList(currentPage, size) {
     let that = this;
-    const json = await api.getAdList({
+    const json = await api.getProductList({
       query: {
         pageNum: currentPage || 1,
         pageSize: size || 10
@@ -117,6 +117,8 @@ export default class Home extends wepy.page {
   async getAdList() {
     const json = await api.getAdList({
       query: {
+        ad_type:"main",
+        state:"1",
         pageNum: 1,
         pageSize: 3
       }

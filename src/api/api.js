@@ -142,7 +142,9 @@ const childGoodsCatetoryList = (params) => wxRequest(params, apiMall + '/api/mal
 //商品分类--end
 
 //查询广告列表
-const getAdList = (params) => wxRequest(params, apiMall + '/test/getList');
+const getAdList = (params) => wxRequest(params, apiMall + '/app/ad/getList');
+//查询首页产品列表
+const getProductList = (params) => wxRequest(params, apiMall + '/test/getList');
 //获取签名和加密策略
 const getPolicySignature = (params) => wxRequest(params, apiMall + '/app/wechat/getPolicySignature');
 
@@ -197,5 +199,6 @@ export default {
   getPayOrderDetail,
   getAdList,
   getSignDate,
-  getPolicySignature
+  getPolicySignature,
+  getProductList
 }

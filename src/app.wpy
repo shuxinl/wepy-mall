@@ -11,8 +11,8 @@ export default class extends wepy.app {
   config = {
     pages: [
       // 'pages/authorize',
-      'pages/uploader',
       'pages/home',
+      'pages/uploader',
       'pages/home_detail',
       'pages/classify',
       'pages/shop_cart',
@@ -62,21 +62,29 @@ export default class extends wepy.app {
         "iconPath": "images/icon_home.png",
         "selectedIconPath": "images/icon_home_active.png"
       }, {
-        "pagePath": "pages/classify",
-        "text": "分类",
+        "pagePath": "pages/uploader",
+        "text": "上传",
         "iconPath": "images/icon_classify.png",
         "selectedIconPath": "images/icon_classify_active.png"
-      }, {
-        "pagePath": "pages/shop_cart",
-        "text": "购物车",
-        "iconPath": "images/icon_shop_cart.png",
-        "selectedIconPath": "images/icon_shop_cart_active.png"
-      }, {
-        "pagePath": "pages/info",
-        "text": "我",
-        "iconPath": "images/icon_info.png",
-        "selectedIconPath": "images/icon_info_active.png"
-      }]
+      }
+      // , {
+      //   "pagePath": "pages/classify",
+      //   "text": "分类",
+      //   "iconPath": "images/icon_classify.png",
+      //   "selectedIconPath": "images/icon_classify_active.png"
+      // }
+      // , {
+      //   "pagePath": "pages/shop_cart",
+      //   "text": "购物车",
+      //   "iconPath": "images/icon_shop_cart.png",
+      //   "selectedIconPath": "images/icon_shop_cart_active.png"
+      // }, {
+      //   "pagePath": "pages/info",
+      //   "text": "我",
+      //   "iconPath": "images/icon_info.png",
+      //   "selectedIconPath": "images/icon_info_active.png"
+      // }
+      ]
     }
   }
 
