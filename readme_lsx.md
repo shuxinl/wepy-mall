@@ -11,6 +11,7 @@ wepy-mall\src\api\api.js 配置接入层地址
 
 开发:
 2018年11月7日：beautiful-wpy  crtl+ shift + 6 代码美化 
+https://blog.csdn.net/zhao_gao/article/details/53485313    net::ERR_PROXY_CONNECTION_FAILED 解决异常
 
 上线注意事项：
 检查的oss 上传的域名重新配置一个OSS子账号
