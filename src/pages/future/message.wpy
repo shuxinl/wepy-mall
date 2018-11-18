@@ -1,0 +1,111 @@
+
+<template>
+  <wxs src="../../wxs/stock.wxs" module="filters"/>
+  <view class="page">
+    <view class="page__bd">
+        <view class="weui-panel weui-panel_access">
+            <view class="weui-panel__bd">
+                <view wx:for="{{result}}" wx:for-index="idx" wx:for-item="itemName">
+                    <view class="weui-media-box weui-media-box_text">
+                    <view class="weui-media-box__desc">
+                    <span wx:if="{{itemName['K'].this_slope > 0 }}" style="color: red;" >k:{{filters.toFix(itemName['K'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['K'].this_slope == 0 }}" >k:{{filters.toFix(itemName['K'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['K'].this_slope < 0 }}" style="color: blue;" >k:{{filters.toFix(itemName['K'].this_expect)}}-</span>
+
+                    <span wx:if="{{itemName['60'].this_slope > 0 }}" style="color: red;" >60:{{filters.toFix(itemName['60'].this_expect)}}-</span>
+                     <span wx:if="{{itemName['60'].this_slope == 0 }}">60:{{filters.toFix(itemName['60'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['60'].this_slope < 0 }}" style="color: blue;" >60:{{filters.toFix(itemName['60'].this_expect)}}-</span>
+
+                    <span wx:if="{{itemName['30'].this_slope > 0 }}" style="color: red;" >30:{{filters.toFix(itemName['30'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['30'].this_slope == 0 }}">30:{{filters.toFix(itemName['30'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['30'].this_slope < 0 }}" style="color: blue;" >30:{{filters.toFix(itemName['30'].this_expect)}}-</span>
+
+                    <span wx:if="{{itemName['15'].this_slope > 0 }}" style="color: red;" >15:{{filters.toFix(itemName['15'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['15'].this_slope == 0 }}">15:{{filters.toFix(itemName['15'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['15'].this_slope < 0 }}" style="color: blue;" >15:{{filters.toFix(itemName['15'].this_expect)}}-</span>
+
+                    <span wx:if="{{itemName['5'].this_slope > 0 }}" style="color: red;" >5:{{filters.toFix(itemName['5'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['5'].this_slope == 0 }}">5:{{filters.toFix(itemName['5'].this_expect)}}-</span>
+                    <span wx:if="{{itemName['5'].this_slope < 0 }}" style="color: blue;" >5:{{filters.toFix(itemName['5'].this_expect)}}-</span>
+                     <span>{{filters.toMin(itemName['created'])}}</span>
+                    </view>
+                  </view>
+                </view>
+                <!--加载更多时动画-->
+               <bottomLoadMore :show.sync="showLoading" message="正在加载"></bottomLoadMore>
+            </view>
+        </view>
+    </view>
+</view>
+</template>
+<script>
+  import wepy from "wepy";
+  import api from "@/api/api";
+  import BottomLoadMore from "../../components/common/bottomLoadMore"
+  import {
+    SYSTEM_INFO,
+    USER_SPECICAL_INFO
+  } from "@/utils/constant";
+  export default class message extends wepy.page {
+    config = {
+      navigationBarTitleText: "futures",
+      enablePullDownRefresh: true
+    };
+    components = {
+      bottomLoadMore: BottomLoadMore
+    }
+    data = {
+      //是否显示 底部loading
+      showLoading: true,
+      pageNum: 1,
+      pageSize: 40,
+      result: null
+    };
+    onLoad(opts) {
+      this.getMessageResult();
+    }
+    async getMessageResult(type) {
+      let that = this;
+      let paramMap = { "pageNum": this.data.pageNum, "pageSize": this.data.pageSize }
+      if (type=='PullDown') {
+        this.data.pageNum = 2; // 重新初始化
+        paramMap.pageNum = 1;
+      }
+      const json = await api.getMessageResult({
+        query: paramMap
+      });
+      console.log('' + json)
+      if (json.data.errorNo == 0) {
+        if (type=='ReachBottom') { // 上拉到底
+          that.result = [...that.result, ...json.data.results.data];
+          that.pageNum = that.pageNum + 1;
+          that.$apply();
+        } else {
+          that.result = json.data.results.data;
+          that.pageNum = 2; // 重新初始化
+          that.$apply();
+        }
+        
+      } else {}
+    }
+    computed = {};
+    methods = {};
+    events = {};
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh() {
+      console.log("监听用户下拉动作");
+      
+      this.getMessageResult("PullDown");
+      wx.stopPullDownRefresh(); // 下拉回弹
+    }
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom() {
+      console.log("页面上拉事件");
+      this.getMessageResult("ReachBottom");
+    }
+  }
+</script>

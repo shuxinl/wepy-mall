@@ -1,0 +1,167 @@
+
+<template>
+  <wxs src="../../wxs/stock.wxs" module="filters" />
+  <view class="page">
+    <view class="page__bd">
+      <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__bd">
+          <view wx:for="{{result}}" wx:for-index="idx" wx:for-item="itemName">
+            <view class="weui-media-box weui-media-box_text">
+              <view class="weui-media-box__desc">
+                {{itemName.code}}--{{itemName.created}}--{{itemName.now_price}}
+              </view>
+              <view class="weui-media-box__desc">
+                <span style='color:red' wx:if="{{filters.stringToJson(itemName.data_context)['K'].trend == 1}}">
+                          K:{{filters.stringToJson(itemName.data_context)['K'].value}}
+                          </span>
+                <span wx:if="{{filters.stringToJson(itemName.data_context)['K'].trend == 0}}">
+                          K:{{filters.stringToJson(itemName.data_context)['K'].value}}
+                          </span>
+                <span style='color: #5ac75c;' wx:if="{{filters.stringToJson(itemName.data_context)['K'].trend == -1}}">
+                          K:-{{filters.stringToJson(itemName.data_context)['K'].value}}
+                          </span>
+                <span style='color:red' wx:if="{{filters.stringToJson(itemName.data_context)['60'].trend == 1}}">
+                          60:{{filters.stringToJson(itemName.data_context)['60'].value}}
+                          </span>
+                <span wx:if="{{filters.stringToJson(itemName.data_context)['60'].trend == 0}}">
+                          60:{{filters.stringToJson(itemName.data_context)['60'].value}}
+                          </span>
+                <span style='color: #5ac75c;' wx:if="{{filters.stringToJson(itemName.data_context)['60'].trend == -1}}">
+                          60:-{{filters.stringToJson(itemName.data_context)['60'].value}}
+                          </span>
+                <span style='color:red' wx:if="{{filters.stringToJson(itemName.data_context)['30'].trend == 1}}">
+                          30:{{filters.stringToJson(itemName.data_context)['30'].value}}
+                          </span>
+                <span wx:if="{{filters.stringToJson(itemName.data_context)['30'].trend == 0}}">
+                          30:{{filters.stringToJson(itemName.data_context)['30'].value}}
+                          </span>
+                <span style='color: #5ac75c;' wx:if="{{filters.stringToJson(itemName.data_context)['30'].trend == -1}}">
+                          30:-{{filters.stringToJson(itemName.data_context)['30'].value}}
+                          </span>
+                <span style='color:red' wx:if="{{filters.stringToJson(itemName.data_context)['15'].trend == 1}}">
+                          15:{{filters.stringToJson(itemName.data_context)['15'].value}}
+                          </span>
+                <span wx:if="{{filters.stringToJson(itemName.data_context)['15'].trend == 0}}">
+                          15:{{filters.stringToJson(itemName.data_context)['15'].value}}
+                          </span>
+                <span style='color: #5ac75c;' wx:if="{{filters.stringToJson(itemName.data_context)['15'].trend == -1}}">
+                          15:-{{filters.stringToJson(itemName.data_context)['15'].value}}
+                          </span>
+                <span style='color:red' wx:if="{{filters.stringToJson(itemName.data_context)['5'].trend == 1}}">
+                          5:{{filters.stringToJson(itemName.data_context)['5'].value}}
+                          </span>
+                <span wx:if="{{filters.stringToJson(itemName.data_context)['5'].trend == 0}}">
+                          5:{{filters.stringToJson(itemName.data_context)['5'].value}}
+                          </span>
+                <span style='color: #5ac75c;' wx:if="{{filters.stringToJson(itemName.data_context)['5'].trend == -1}}">
+                          5:-{{filters.stringToJson(itemName.data_context)['5'].value}}
+                          </span>
+              </view>
+              <!-- <view wx:for="{{filters.stringToJson(itemName.data_context)}}" wx:for-item="XXXX">
+                        {{XXXX.trend}}----{{XXXX.value}}
+                      </view> -->
+            </view>
+          </view>
+          <!--加载更多时动画-->
+          <bottomLoadMore :show.sync="showLoading" message="正在加载"></bottomLoadMore>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from "wepy";
+  import api from "@/api/api";
+  import BottomLoadMore from "../../components/common/bottomLoadMore"
+ import {
+  SYSTEM_INFO,
+  USER_SPECICAL_INFO,
+  USER_INFO
+} from '@/utils/constant';
+  export default class strategy extends wepy.page {
+    config = {
+      navigationBarTitleText: "futures",
+      enablePullDownRefresh: true
+    };
+    components = {
+      bottomLoadMore: BottomLoadMore
+    }
+    data = {
+      //是否显示 底部loading
+      showLoading: true,
+      pageNum: 1,
+      pageSize: 40,
+      result: null
+    };
+    onLoad(opts) {
+      this.getStrategy();
+    }
+    async getStrategy(type) {
+      let that = this;
+      let paramMap = { "pageNum": this.data.pageNum, "pageSize": this.data.pageSize }
+      if (type=='PullDown') {
+        this.data.pageNum = 2; // 重新初始化
+        paramMap.pageNum = 1;
+      }
+      const json = await api.getStrategy({
+        query: paramMap
+      });
+      console.log('' + json)
+      if (json.data.errorNo == 0) {
+        if (type=='ReachBottom') { // 上拉到底
+          that.result = [...that.result, ...json.data.results.data];
+          that.pageNum = that.pageNum + 1;
+          that.$apply();
+        } else {
+          that.result = json.data.results.data;
+          that.pageNum = 2; // 重新初始化
+          that.$apply();
+        }
+        this.showLoading = false;
+      } else {
+        this.showLoading = false;
+      }
+    }
+    computed = {};
+    methods = {};
+    events = {};
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh() {
+      this.showLoading = true;
+      console.log("监听用户下拉动作");
+      
+      this.getStrategy("PullDown");
+      wx.stopPullDownRefresh(); // 下拉回弹
+      // const aa = this;
+      // let paramMap = { "pageNum": 1, "pageSize": this.data.pageSize }
+      // this.data.pageNum = 1;
+      // ajax.loadData("/app/getStrategy", paramMap, function (response) {
+      //   aa.setData({
+      //     result: response.results.data
+      //   })
+      //   wx.stopPullDownRefresh(); // 下拉回弹
+      // });
+    }
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom() {
+      console.log("页面上拉事件");
+      this.showLoading = true;
+      this.getStrategy("ReachBottom");
+      // const aa = this;
+      // let paramMap = { "pageNum": this.data.pageNum + 1, "pageSize": this.data.pageSize }
+      // this.data.pageNum += 1;
+      // ajax.loadData("/app/getStrategy", paramMap, function (response) {
+      //   for (var i = 0; i < response.results.data.length; i++) { // 必须用一个一个插入到集合中去，才能集合新增。暂时没有找到更好的方法
+      //     aa.data.result.push(response.results.data[i]);
+      //   }
+      //   aa.setData({
+      //     result: aa.data.result
+      //   })
+      // });
+    }
+  }
+</script>

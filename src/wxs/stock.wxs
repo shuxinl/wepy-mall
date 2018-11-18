@@ -1,0 +1,25 @@
+var stock = {
+
+  toFix: function (value) {
+    // 优先转为数字后再切割小数点
+    return parseFloat(value).toFixed(1);//此处2为保留两位小数
+  },
+  // 时间字符串提取小时分钟
+  toMin: function (value) {
+    if (value.length > 0) {
+      return value.substring(11, 16)
+    }
+    return "";
+  },
+  // 字符串转json
+  stringToJson: function (data) {
+    var da  = JSON.parse(data);
+    console.log(da);
+    return JSON.parse(data);
+  }
+}
+module.exports = {
+  toFix: stock.toFix,
+  toMin: stock.toMin,
+  stringToJson: stock.stringToJson
+}

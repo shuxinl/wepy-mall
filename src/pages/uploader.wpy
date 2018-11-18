@@ -1,5 +1,8 @@
 <template>
 <upload :size.sync="size"></upload>
+<view class="weui-uploader__file" bindtap="scan" id="{{item}}">
+                        扫码
+                        </view>
 </template> 
 <script>
 import wepy from 'wepy';
@@ -20,6 +23,20 @@ export default class Uploader extends wepy.page {
   }
   computed = {}
   methods = {
+      scan :function(params) {
+          wx.scanCode({
+            success: (res) => {
+                console.log(res);
+                
+                // this.setData({
+                // img: res.result
+                // })
+            },
+            fail: (res) => {
+                console.log(res);
+            }
+        })
+      }
   }
   events = {
       upload: function(params) {
@@ -32,7 +49,6 @@ export default class Uploader extends wepy.page {
       }
   }
   onLoad(){
-    
   }
  
 }

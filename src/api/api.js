@@ -148,6 +148,11 @@ const getProductList = (params) => wxRequest(params, apiMall + '/test/getList');
 //获取签名和加密策略
 const getPolicySignature = (params) => wxRequest(params, apiMall + '/app/wechat/getPolicySignature');
 
+
+//查询策略列表
+const getStrategy = (params) => wxRequest(params, apiMall + '/app/getStrategy');
+const getMessageResult = (params) => wxRequest(params, apiMall + '/app/getResultList');
+
 export default {
   hostGoodsList,
   getDiscoverList,
@@ -200,5 +205,7 @@ export default {
   getAdList,
   getSignDate,
   getPolicySignature,
-  getProductList
+  getProductList,
+  getStrategy,
+  getMessageResult
 }

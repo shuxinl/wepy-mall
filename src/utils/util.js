@@ -138,6 +138,21 @@ function fileSuffix(filename){
   let extension = filename.split('.').pop();  //jpg
   return extension;
 }
+
+// 获取url参数
+const getQueryString = (url, name) => {
+  // console.log("url = " + url)
+  // console.log("name = " + name)
+  var reg = new RegExp('(^|&|/?)' + name + '=([^&|/?]*)(&|/?|$)', 'i')
+  var r = url.substr(1).match(reg)
+  if (r != null) {
+    console.log("r = " + r)
+    console.log("r[2] = " + r[2])
+    return r[2]
+  }
+  return null;
+}
+
 module.exports = {
   getCurrentDate: getCurrentDate,
   getCurrentTime: getCurrentTime,
@@ -151,5 +166,6 @@ module.exports = {
   mul: mul,
   accAdd: accAdd,
   convertStarArray: convertStarArray,
-  fileSuffix:fileSuffix
+  fileSuffix:fileSuffix,
+  getQueryString:getQueryString
 }

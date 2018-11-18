@@ -1,0 +1,83 @@
+module.exports = {
+  items: function (items) {
+    var imgs = JSON.parse(items)["0"];
+    var lasdIndex = imgs.lastIndexOf("tbvideo");
+    //截取判断该图片是否是商品图片，如果是获取第二张图片
+    if(lasdIndex > 0){
+      imgs = JSON.parse(items)["1"];
+    }
+    imgs = imgs.replace('https:https:', 'https:');
+    imgs = imgs.replace('_60x60.jpg', "");
+    return imgs;
+  },
+  itemsList: function(items){
+    // var imgs = JSON.parse(items);
+    // var list = [];
+    // for (var x in imgs) {
+    //   console.log(imgs[x]);
+    //   list.push(imgs[x]);
+    // }
+    // return list;
+    var imgs = items;
+    imgs = imgs.replace('https:https:', 'https:');
+    imgs = imgs.replace('_60x60.jpg', "");
+    return imgs;
+  },
+  paramsTitle: function(times){
+    var lasdIndex = times.lastIndexOf(":");
+    var title = times.substring(0, lasdIndex);
+    return title;
+  },
+  paramsContent: function(times){
+    var lasdIndex = times.lastIndexOf(":");
+    var content = times.substring(lasdIndex + 1, times.length);
+    return content;
+  },
+  getArrayList: function(value){
+    console.log(value)
+    var index = 0;
+    var last = value.lastIndexOf(",");
+    var list = [];
+    for(var i = 0; i <= 0; i--){
+      if(last > 0){
+        //判断是否是第一次切割
+        if(index == 0){
+          //第一次切割位置从0开始
+          var vle = value.substring(last + 1, value.length);
+          //切割后的位置给index来区分是否是第一次切割
+          index = last;
+          //添加进列表集合
+          list.push(vle);
+          //重新给value赋值把剩下的值给value
+          value = value.substring(0, last);
+        }else{
+          //获取切割的位置
+          last = value.lastIndexOf(",");
+          //判断切割位置是否大于0，小于0则是已经没有可以切割了
+          if(last > 0){
+            //第一次切割位置从0开始
+            var vle = value.substring(last + 1, value.length);
+            // var vle = value.substring(0, last);
+            //添加进列表集合
+            list.push(vle);
+            //重新给value赋值把剩下的值给value
+            // value = value.substring(last + 1, value.length);
+            value = value.substring(0, last);
+          }else{
+            //添加进列表集合，最后的值，获取到直接跳出循环
+            list.push(value);
+            break;
+          }
+        }
+      }else{
+        if(index == 0){
+          //有且只有一个时直接添加进列表
+          list.push(value);
+        }
+        //有且只有一个值跳出循环
+        break;
+      }
+    }
+    return list;
+  }
+};

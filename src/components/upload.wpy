@@ -134,7 +134,7 @@
             }
         }
         events = {}
-        onLoad() {
+        onLoad(options) {
             console.log("0000000000000:" + this.size);
             // console.log(util.getCurrentDate());
             this.getPolicySignature(); // 加载授权信息
